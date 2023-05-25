@@ -8,21 +8,21 @@
 5.  สร้าง Data Base ใหม่ชื่อ demo2
 6.  สร้างตารางใหม่ด้วยคำสั่ง SQL
 
-'''
+``` sql
 CREATE TABLE users (
   id INT PRIMARY KEY AUTO_INCREMENT,
   username VARCHAR(50) NOT NULL,
   password VARCHAR(50) NOT NULL,
   email VARCHAR(100) NOT NULL
 );
-'''
+```
 6.สร้างอีกตารางนึงสำหรับเก็บข้อความ
-'''
+``` sql
 CREATE TABLE messages (
     id INT(11) AUTO_INCREMENT PRIMARY KEY,
     user_id INT(11) NOT NULL,
     message TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-'''
+```
 7.เมื่่อสร้างเสร็จสามารถเข้าเว็ปไซต์เเละพัฒนาต่อได้ [http://localhost/(ชื่อไฟล์่ที่สร้างในC:\xampp\htdocs\ชื่อโฟเดอที่เก็บโค้ด)/login.php]
