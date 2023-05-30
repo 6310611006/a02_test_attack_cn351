@@ -22,7 +22,7 @@ $dbpass = "";
 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $dbuser, $dbpass);
 
 // Simulate SQL injection vulnerability (for testing purposes only)
-$sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+$sql = "SELECT * FROM users WHERE username = '$username' AND password = '$password' ";
 
 $result = $conn->query($sql);
 

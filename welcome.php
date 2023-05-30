@@ -1,12 +1,12 @@
 <?php
 // Database credentials
 $servername = "localhost";
-$username = "root";
-$password = "";
+$dbuser = "root";
+$dbpass = "";
 $dbname = "demo2";
 
 // Create a connection
-$conn = mysqli_connect($servername, $username, $password, $dbname);
+$conn = mysqli_connect($servername, $dbuser, $dbpass, $dbname);
 
 // Check the connection
 if (!$conn) {
@@ -96,6 +96,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     
     <p>
         <a href="reset-password.php" class="btn btn-warning">Reset Your Password</a>
+        <a href="test_sqli.php" class="btn btn-warning">test sql injection</a>
         <a href="logout.php" class="btn btn-danger ml-3">Sign Out of Your Account</a>
     </p>
 
